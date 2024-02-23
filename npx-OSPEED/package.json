@@ -1,15 +1,14 @@
 {
-	"name": "npx-ospeed",
+	"name": "0speed",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "A simple speedy script to install and setup a new front & backend project",
+	"main": "setup.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"bin": {
-		"my-npx-script": "./index.js"
+		"0speed": "setup.js"
 	},
-	"keywords": [],
-	"author": "",
+	"author": "archways404",
 	"license": "ISC"
 }
