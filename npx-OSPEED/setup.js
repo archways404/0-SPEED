@@ -11,9 +11,9 @@ function setupFrontend() {
 	});
 	console.log('Installing frontend dependencies...');
 	execSync('cd frontend && npm install', { stdio: 'inherit' });
-	execSync('npm install react-router-dom', { stdio: 'inherit' });
 	console.log('Added React Router...');
-	createCustomStructure();
+	//createCustomStructure();
+	addDevScript();
 	console.log('Frontend setup complete.');
 }
 
@@ -28,7 +28,7 @@ function setupBackend() {
 
 	// Add Actix-web dependency to Cargo.toml
 	const cargoTomlPath = './Cargo.toml';
-	const actixDependency = '\n\n[dependencies]\nactix-web = "4.0.0-beta.8"\n';
+	const actixDependency = 'actix-web = "4.0.0-beta.8"\n';
 	fs.appendFileSync(cargoTomlPath, actixDependency);
 
 	console.log('Actix-web dependency added to Cargo.toml');
@@ -59,28 +59,15 @@ async fn main() -> std::io::Result<()> {
 	process.chdir('..');
 }
 
-function createCustomStructure() {
-	// Example: Creating a components directory with a sample component
-	const componentsDir = path.join(process.cwd(), 'src/components');
-	if (!fs.existsSync(componentsDir)) {
-		fs.mkdirSync(componentsDir, { recursive: true });
-	}
+function addDevScript() {
+	const packagePath = path.join(process.cwd(), 'package.json');
+	const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
-	const sampleComponentContent = `
-import React from 'react';
+	packageJson.scripts = packageJson.scripts || {};
+	packageJson.scripts.dev =
+		'concurrently "cargo run --manifest-path=test-backend/Cargo.toml" "cd frontend && npm run dev"';
 
-const SampleComponent = () => (
-    <div>Sample Component</div>
-);
-
-export default SampleComponent;
-    `;
-	fs.writeFileSync(
-		path.join(componentsDir, 'SampleComponent.jsx'),
-		sampleComponentContent
-	);
-
-	console.log('Custom structure created.');
+	fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf8');
 }
 
 function main() {
@@ -89,6 +76,14 @@ function main() {
 	try {
 		fs.mkdirSync('my-rust-react-app');
 		process.chdir('my-rust-react-app');
+
+		// Initialize a new npm project at the root
+		console.log('Initializing new npm project at the root...');
+		execSync('npm init -y', { stdio: 'inherit' });
+
+		// Install concurrently at the project root
+		console.log('Installing concurrently at the project root...');
+		execSync('npm install concurrently --save-dev', { stdio: 'inherit' });
 
 		setupFrontend();
 		setupBackend();
