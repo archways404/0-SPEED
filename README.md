@@ -1,4 +1,4 @@
-# 0SPEED
+# 0-SPEED
 
 This project sets up a full-stack web application using React with Vite for the frontend and Rust with Actix-web for the backend.
 
